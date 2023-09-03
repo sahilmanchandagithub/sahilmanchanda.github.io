@@ -292,3 +292,81 @@ button[type="submit"]:hover {
 .portfolio-item p {
     font-size: 1.2rem;
 }
+
+
+
+
+/* Add mobile-friendly styles for the navigation menu */
+#menu-icon {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.bar {
+    width: 30px;
+    height: 3px;
+    background-color: #fff;
+    margin: 4px 0;
+}
+
+header nav ul {
+    text-align: center;
+    display: none;
+    background-color: #333;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    z-index: 1;
+}
+
+nav ul li {
+    display: block;
+    margin-bottom: 10px;
+}
+
+/* Mobile-friendly adjustments */
+@media (max-width: 768px) {
+    header nav ul {
+        top: 50px;
+    }
+
+    nav ul {
+        flex-direction: column;
+    }
+
+    nav ul.active {
+        display: flex;
+    }
+
+    #menu-icon {
+        display: flex;
+    }
+
+    .cta-button {
+        font-size: 0.9rem;
+        padding: 8px 16px;
+    }
+
+    /* Add responsive styles for the hero section */
+    #hero {
+        text-align: center;
+        padding: 1rem;
+    }
+
+    #hero h1 {
+        font-size: 2rem;
+        margin-bottom: 10px;
+    }
+
+    #hero p {
+        font-size: 1rem;
+        margin-bottom: 20px;
+    }
+
+    /* Adjust padding for the content sections */
+    section {
+        padding: 1rem;
+    }
+}
