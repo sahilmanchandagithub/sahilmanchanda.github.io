@@ -1,55 +1,62 @@
-$("#contactForm").validator().on("submit", function (event) {
-    if (event.isDefaultPrevented()) {
-        // handle the invalid form...
-        formError();
-        submitMSG(false, "Did you fill in the form properly?");
-    } else {
-        // everything looks good!
-        event.preventDefault();
-        submitForm();
-    }
-});
-
-
-function submitForm(){
-    // Initiate Variables With Form Content
-    var name = $("#name").val();
-    var email = $("#email").val();
-    var msg_subject = $("#msg_subject").val();
-    var message = $("#message").val();
-
-
-    $.ajax({
-        type: "POST",
-        url: "php/form-process.php",
-        data: "name=" + name + "&email=" + email + "&msg_subject=" + msg_subject + "&message=" + message,
-        success : function(text){
-            if (text == "success"){
-                formSuccess();
-            } else {
-                formError();
-                submitMSG(false,text);
-            }
+    $("#contactForm").validator().on("submit", function (event) {
+        if (event.isDefaultPrevented()) {
+            // Handle the invalid form...
+            formError();
+            submitMSG(false, "Did you fill in the form properly?");
+        } else {
+            // Prevent the default form submission
+            event.preventDefault();
+            // Create an object with form values
+            var formData = {
+                "your_name": $("#name").val(),
+                "Email": $("#email").val(),
+                "Phone_number": $("input[name='Phone_number']").val(),
+                "Message": $("#message").val()
+            };
+            // Send the data to the Google Apps Script using fetch
+            sendDataToGoogleAppsScript(formData);
         }
     });
-}
 
-function formSuccess(){
-    $("#contactForm")[0].reset();
-    submitMSG(true, "Message Submitted!")
-}
 
-function formError(){
-    $("#contactForm").removeClass().addClass('shake animated').one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
-        $(this).removeClass();
+    function sendDataToGoogleAppsScript(formData) {fetch('https://script.google.com/macros/s/AKfycbxXEsxA8MkZpe5siICRG0oHryLmpjotMrM8FEiI-jJl5KbYxVAs32koX-cW90KovWUUvQ/exec', {
+        redirect: "follow",
+        method: 'POST',
+        headers: {
+            "Content-Type": "text/plain;charset=utf-8",
+        },
+        body: JSON.stringify(formData),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.result === 'success') {
+            formSuccess();
+        } else {
+            formError();
+            submitMSG(false, data.message);
+        }
+    })
+    .catch(error => {
+        formError();
+        submitMSG(false, 'An error occurred while submitting the form.');
+        console.error(error);
     });
-}
 
-function submitMSG(valid, msg){
-    if(valid){
-        var msgClasses = "h3 text-center tada animated text-success";
-    } else {
-        var msgClasses = "h3 text-center text-danger";
     }
-    $("#msgSubmit").removeClass().addClass(msgClasses).text(msg);
-}
+
+    function formSuccess() {
+        $("#contactForm")[0].reset();
+        submitMSG(true, "Message Submitted!")
+        $("#success-message").show();
+    }
+
+    function formError() {
+        $("#contactForm").removeClass().addClass('shake animated').one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function () {
+            $(this).removeClass();
+        });
+    }
+
+    function submitMSG(valid, msg) {
+        var msgClasses = valid ? "h3 text-center tada animated text-success" : "h3 text-center text-danger";
+        $("#msgSubmit").removeClass().addClass(msgClasses).text(msg);
+    }
